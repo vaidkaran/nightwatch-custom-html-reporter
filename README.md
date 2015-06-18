@@ -1,7 +1,7 @@
 ![Image of Nightwatch Owl](http://nightwatchjs.org/img/logo-nightwatch.png)
 Nightwatch HTML Reporter
 ==========
-A custom html reporter for [Nightwatch.js](http://nightwatchjs.org/), a browser automation testing framework.
+A custom html reporter for [Nightwatch.js](http://nightwatchjs.org/), a  browser automation testing framework.
 
 
 ## Install

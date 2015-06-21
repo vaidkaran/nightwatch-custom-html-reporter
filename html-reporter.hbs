@@ -12,6 +12,20 @@
 
     body { padding: 10px 40px; }
 
+    header { position: relative; }
+
+    #expand-collapse-all {
+      position: absolute;
+      bottom: -25px;
+      right: 0;
+      padding: 3px 6px;
+      border-radius: 4px;
+      background-color: #000;
+      font-size: 0.8em;
+      color: #fff;
+      cursor: pointer;
+    }
+
     table { width: 100%; margin-bottom: 20px; }
 
       td {
@@ -34,7 +48,10 @@
     tr.overview td      { padding-bottom: 0px; border-bottom: none; }
     tr.overview.last td { padding-bottom: 3px; }
 
-    ul.assertions   { list-style-type: none; }
+    .suite { cursor: pointer; }
+      .suite > .toggle-assertions { display: none; font-weight: normal; margin-left: 2px; }
+
+    ul.assertions     { list-style-type: none; }
       span.error      { color: #AD2B2B; }
       span.success    { color: #53891E; }
 
@@ -56,28 +73,35 @@
 <body>
   <h1>Test Results</h1>
 
-  <table border="0" cellpadding="0" cellspacing="0">
-    <tr class="overview">
-      <td colspan="3" title="{{browser}}"><strong>Browser:</strong> {{browser}}</td>
-    </tr>
-    <tr class="overview">
-      <td colspan="3"><strong>Timestamp:</strong> {{timestamp}}</td>
-    </tr>
-    <tr class="overview last">
-      <td colspan="3"><strong>Tests:</strong> {{results.tests}}<br></td>
-    </tr>
-    <tr>
-      <td class="pass"><strong>{{results.passed}}</strong> passed</td>
-      <td class="skip"><strong>{{results.errors}}</strong> errors</td>
-      <td class="fail"><strong>{{results.failed}}</strong> failures</td>
-    </tr>
-  </table>
+  <header>
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr class="overview">
+        <td colspan="3" title="{{browser}}"><strong>Browser:</strong> {{browser}}</td>
+      </tr>
+      <tr class="overview">
+        <td colspan="3"><strong>Timestamp:</strong> {{timestamp}}</td>
+      </tr>
+      <tr class="overview last">
+        <td colspan="3"><strong>Tests:</strong> {{results.tests}}<br></td>
+      </tr>
+      <tr>
+        <td class="pass"><strong>{{results.passed}}</strong> passed</td>
+        <td class="skip"><strong>{{results.errors}}</strong> errors</td>
+        <td class="fail"><strong>{{results.failed}}</strong> failures</td>
+      </tr>
+    </table>
+
+    <div id="controls">
+      <div id="expand-collapse-all">toggle asssertions</div>
+    </div>
+  </header>
 
   {{#each results.modules}}
       <h2>{{@key}}</h2>
 
       {{#each this.completed}}
-        <h3>{{@key}}</h3>
+        <h3 class="suite">{{@key}} <span class="toggle-assertions"></span></h3>
+
         <ul class="assertions">
           {{#each this.assertions}}
             <li>
@@ -138,11 +162,42 @@
       var $link = $(this);
       var $code = $link.parent().find('code');
 
+      $code.toggle();
+
       $code.is(':visible') ? $link.text('hide stacktrace'):
                              $link.text('view stacktrace');
-
-      $code.toggle();
     });
+
+    $('h3.suite')
+      .on({
+          click: function(evt) {
+            $(this).next('ul.assertions').toggle();
+            toggleAssertions(this);
+          },
+          mouseenter: function(evt) {
+            toggleAssertions(this);
+            $(this).find('span.toggle-assertions').show();
+          },
+          mouseleave: function(evt) {
+            $(this).find('span.toggle-assertions').hide();
+          }
+      });
+
+    function toggleAssertions(element) {
+      if ( $(element).next('ul.assertions').is(':visible') ) {
+        $(element).find('span.toggle-assertions').text('-');
+      } else {
+        $(element).find('span.toggle-assertions').text('+');
+      }
+    }
+
+    $('#expand-collapse-all').on('click', function(evt) {
+      $('ul.assertions').toggle();
+    });
+
+   if ( $(document).height() > $(window).height()) {
+     $('ul.assertions').hide();
+   }
   });
   </script>
 </body>

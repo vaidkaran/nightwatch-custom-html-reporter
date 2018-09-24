@@ -115,6 +115,7 @@
 
               {{#if this.failure}}
                 {{this.failure}}
+                {{screenshots}}
               {{/if}}
 
               {{#if this.stacktrace}}
@@ -125,6 +126,7 @@
               {{/if}}
             </li>
           {{/each}}
+          {{screenshotHelper @../key @key}}
         </ul>
 
         <p>
